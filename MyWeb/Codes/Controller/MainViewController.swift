@@ -19,8 +19,7 @@ class MainViewController: UIViewController {
     }()
     
     lazy var addWebsView: AddWebsView = {[unowned self] in
-        let addWebsView = AddWebsView(frame: CGRect(x: 0, y: 0, width: cScreenW - 30, height: 250.0))
-        addWebsView.center = self.view.center
+        let addWebsView = AddWebsView(frame: CGRect(x: 15, y: 100, width: cScreenW - 30, height: 250.0))
         addWebsView.isHidden = true
         addWebsView.delegate = self
         return addWebsView
