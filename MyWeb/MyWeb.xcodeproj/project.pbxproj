@@ -11,6 +11,8 @@
 		E97020D320C6780600AB497D /* WebModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97020D220C6780600AB497D /* WebModel.swift */; };
 		E97309E020C137120091A9F1 /* webs.plist in Resources */ = {isa = PBXBuildFile; fileRef = E97309DF20C137120091A9F1 /* webs.plist */; };
 		E97309E220C137480091A9F1 /* Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97309E120C137480091A9F1 /* Source.swift */; };
+		E9821F6A20CA274E007DAF61 /* everyone-can-use-english.pdf in Resources */ = {isa = PBXBuildFile; fileRef = E9821F6920CA274D007DAF61 /* everyone-can-use-english.pdf */; };
+		E9821F6E20CA360D007DAF61 /* QLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9821F6D20CA360D007DAF61 /* QLViewController.swift */; };
 		E9A5927220C0FCA0005F32BF /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A5927120C0FCA0005F32BF /* WebViewController.swift */; };
 		E9D4F34320BD47130078AB76 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D4F34220BD47130078AB76 /* AppDelegate.swift */; };
 		E9D4F34520BD47130078AB76 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D4F34420BD47130078AB76 /* ViewController.swift */; };
@@ -45,6 +47,8 @@
 		E97020D220C6780600AB497D /* WebModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebModel.swift; sourceTree = "<group>"; };
 		E97309DF20C137120091A9F1 /* webs.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = webs.plist; sourceTree = "<group>"; };
 		E97309E120C137480091A9F1 /* Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
+		E9821F6920CA274D007DAF61 /* everyone-can-use-english.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "everyone-can-use-english.pdf"; sourceTree = "<group>"; };
+		E9821F6D20CA360D007DAF61 /* QLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QLViewController.swift; sourceTree = "<group>"; };
 		E9A5927120C0FCA0005F32BF /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		E9D4F33F20BD47130078AB76 /* MyWeb.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyWeb.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9D4F34220BD47130078AB76 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -91,6 +95,7 @@
 		E97309DE20C136B50091A9F1 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				E9821F6920CA274D007DAF61 /* everyone-can-use-english.pdf */,
 				E97309DF20C137120091A9F1 /* webs.plist */,
 				E97309E120C137480091A9F1 /* Source.swift */,
 			);
@@ -166,6 +171,7 @@
 			children = (
 				E9D4F37420BD495F0078AB76 /* MainViewController.swift */,
 				E9A5927120C0FCA0005F32BF /* WebViewController.swift */,
+				E9821F6D20CA360D007DAF61 /* QLViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -302,6 +308,7 @@
 				E97309E020C137120091A9F1 /* webs.plist in Resources */,
 				E9D4F34A20BD47150078AB76 /* Assets.xcassets in Resources */,
 				E9D4F34820BD47130078AB76 /* Main.storyboard in Resources */,
+				E9821F6A20CA274E007DAF61 /* everyone-can-use-english.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +336,7 @@
 				E97020D320C6780600AB497D /* WebModel.swift in Sources */,
 				E9D4F37820BD4AD60078AB76 /* Common.swift in Sources */,
 				E9D4F37520BD495F0078AB76 /* MainViewController.swift in Sources */,
+				E9821F6E20CA360D007DAF61 /* QLViewController.swift in Sources */,
 				E97309E220C137480091A9F1 /* Source.swift in Sources */,
 				E9D4F34520BD47130078AB76 /* ViewController.swift in Sources */,
 				E9A5927220C0FCA0005F32BF /* WebViewController.swift in Sources */,

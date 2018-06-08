@@ -21,4 +21,6 @@ class Web  {
     func toWebDict() -> Dictionary<String, String> {
         return [self.name:self.web]
     }
+    
+    
 }

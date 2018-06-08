@@ -14,6 +14,15 @@ class WebViewController: UIViewController {
     lazy var webView : UIWebView = {[unowned self] in
         let webView = UIWebView(frame: CGRect(x: 0, y: 0, width: cScreenW, height: cScreenH))
         webView.backgroundColor = UIColor.white
+        
+        webView.scalesPageToFit = true
+        webView.isMultipleTouchEnabled = true
+        webView.isUserInteractionEnabled = true
+        webView.scrollView.isScrollEnabled = true
+        webView.contentMode = UIViewContentMode.scaleAspectFit
+        
+        webView.delegate = self
+
         return webView
     }()
     lazy var loadingView : UIActivityIndicatorView = {[unowned self] in
@@ -34,7 +43,6 @@ class WebViewController: UIViewController {
         if let urlstr = webUrlStr {
             let url = URL(string: urlstr)
             let request:URLRequest = URLRequest(url: url!)
-            webView.delegate = self
             webView.loadRequest(request)
         }
         

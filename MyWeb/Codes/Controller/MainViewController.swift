@@ -7,9 +7,23 @@
 //
 
 import UIKit
+import QuickLook
 
 class MainViewController: UIViewController {
-    //Mark
+    //can not work
+    subscript(indexPath: IndexPath) -> Web? {
+        return self.getWeb(indexPath: indexPath)
+    }
+    
+    //MARK: init let and var
+    var web:Web?
+    var websDict: Dictionary <String, Any>? {
+        get {
+            return Source.getDictionaryOfWebs()
+        }
+    }
+    
+    //tableView
     lazy var tableView: UITableView = {[unowned self] in
         let tableView = UITableView(frame: CGRect(x: 0, y: 0, width:cScreenW , height: cScreenH))
         tableView.delegate = self
@@ -18,6 +32,7 @@ class MainViewController: UIViewController {
         return tableView
     }()
     
+    //addWebView
     lazy var addWebsView: AddWebsView = {[unowned self] in
         let addWebsView = AddWebsView(frame: CGRect(x: 15, y: cScreenH - 250.0, width: cScreenW - 30, height: 250.0))
         addWebsView.isHidden = true
@@ -25,62 +40,52 @@ class MainViewController: UIViewController {
         return addWebsView
     }()
     
-    var websDict: Dictionary <String, Any>? {
-        get {
-            return Source.getDictionaryOfWebs()
-        }
-    }
-    
+    //quick look
+    lazy var qlPC: QLPreviewController = {[unowned self] in
+        let pc = QLPreviewController()
+        pc.dataSource = self
+        pc.delegate = self
+        return pc
+    }()
+  
+    //MARK: viewController function
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         self.title = "Home"
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action:#selector(rightAddAction))
-
         
-        //注册通知
+        //NotificationCenter
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
         
-        //添加控件
+        //init view
         self.view.addSubview(tableView)
         self.view.addSubview(addWebsView)
+        
+        // init data
         if websDict == nil || websDict!.isEmpty {
             let originalDict = [
                 "BlockChain": ["Candy":"https://ibo.candy.one","非小号":"https://www.feixiaohao.com"],
-                "Learn": ["知笔墨":"http://zhibimo.com","ECMAScript 6 入门":"http://es6.ruanyifeng.com/#docs/intro"]
+                "Learn": ["知笔墨":"http://zhibimo.com","ECMAScript 6 入门":"http://es6.ruanyifeng.com/#docs/intro"],
+                "Book":["everyone-can-use-english":Source.getFilePath(fileName: "everyone-can-use-english", type: "pdf")]
             ]
             Source.writeDictionaryToWebs(dict: originalDict)
         }
         
         tableView.reloadData()
     }
-
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
-//MARK: 事件
+//MARK: action
 extension MainViewController {
-    @objc private func rightAddAction()  {
+    @objc fileprivate func rightAddAction()  {
         self.addWebsView.showAddWebs(vc: self)
     }
     
@@ -90,26 +95,31 @@ extension MainViewController {
         let dict = websDict![group] as! Dictionary<String,Any>
         return dict
     }
+    
+    fileprivate func getWeb(indexPath: IndexPath ) -> Web {
+        var groups = [String](websDict!.keys)
+        let group = groups[indexPath.section]
+        let groupDict = websDict![group] as! Dictionary<String,Any>
+
+        let names = [String](groupDict.keys)
+        let name = names[indexPath.row]
+
+        let www =  groupDict[name] as? String
+
+        web = Web.init(group: group, name: name, web: www!)
+        return web!
+    }
 }
 
 // 键盘通知
 extension MainViewController {
-    @objc private func keyboardWillShow(_ notification:Notification) {
+    @objc fileprivate func keyboardWillShow(_ notification:Notification) {
         let kbInfo = notification.userInfo
         let kbRect = (kbInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
         let kbH = kbRect.origin.y - cScreenH
         let duration = kbInfo![UIKeyboardAnimationDurationUserInfoKey] as! Double
         UIView.animate(withDuration: duration) {
             self.addWebsView.transform = CGAffineTransform(translationX: 0, y: kbH)
-        }
-    }
-    @objc private func keyboardWillHide(_ notification:Notification) {
-        let kbInfo = notification.userInfo
-        let kbRect = (kbInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
-//        let changeY = kbRect.origin.y - cScreenH
-        let duration = kbInfo![UIKeyboardAnimationDurationUserInfoKey] as! Double
-        UIView.animate(withDuration: duration) {
-            self.addWebsView.transform = CGAffineTransform(translationX: 0, y: 0)
         }
     }
 }
@@ -150,32 +160,34 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         if cell == nil {
             cell = UITableViewCell(style: .default, reuseIdentifier: cellId)
         }
-        let groupDict = getGroupDict(index: indexPath.section)
-        let names = [String](groupDict.keys)
-        cell?.textLabel?.text = names[indexPath.row]
+
+        let web = self.getWeb(indexPath: indexPath)
+        cell?.textLabel?.text = web.name
+        
         
         return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let groupDict = getGroupDict(index: indexPath.section)
-
-        let names = [String](groupDict.keys)
-        let name = names[indexPath.row]
         
-        let webVC: WebViewController = WebViewController()
-        webVC.webUrlStr = groupDict[name] as? String
-        webVC.title = name
-        
-        //通过导航栏切换界面
-        self.navigationController?.pushViewController(webVC, animated: true)
-        //直接切换界面
-        //self.present(webVC, animated: true, completion: nil)
+        //pdf book
+        let web = self.getWeb(indexPath: indexPath)
+        if web.group == "Book" {
+            //bottom to up
+            self.present(self.qlPC, animated: true, completion: nil)
+        } else {
+            let webVC: WebViewController = WebViewController()
+            webVC.webUrlStr = web.web
+            webVC.title = web.name
+            
+            //nav push
+            self.navigationController?.pushViewController(webVC, animated: true)
+        }
     }
     
     //edit cell
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        //可以省略，需要处理的可以做权限开放
+        //can move dont need
         return true
     }
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
@@ -189,28 +201,26 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             let alertController = UIAlertController(title: "提示", message: "您确定删除此网址收藏吗？", preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "取消", style: .cancel, handler: nil)
             let sureAction = UIAlertAction(title: "确定", style: .default) { (action) in
-                
-                var groups = [String](self.websDict!.keys)
-                let group = groups[indexPath.section]
-                var groupDict = self.websDict![group] as! Dictionary<String,Any>
-                
-                let names = [String](groupDict.keys)
-                let name = names[indexPath.row]
-                
-                var dict = self.websDict!
-                if names.count == 1 {
-                    dict.removeValue(forKey: group)
-                } else {
-                    groupDict.removeValue(forKey: name)
-                    dict[group] = groupDict
-                }
-                
-                Source.writeDictionaryToWebs(dict: dict)
+                let web = self.getWeb(indexPath: indexPath)
+                Source.deleteWeb(web: web)
                 self.tableView.reloadData()
             }
             alertController.addAction(cancelAction)
             alertController.addAction(sureAction)
             self.present(alertController, animated: true, completion: nil)
         }
+    }
+}
+
+//MAEK:QLPreviewControllerDelegate  QLPreviewControllerDataSource
+extension MainViewController:QLPreviewControllerDelegate, QLPreviewControllerDataSource {
+    func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
+        return 1
+    }
+    
+    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
+        let path = Source.getFilePath(fileName: web!.name, type: "pdf")
+        let url = URL.init(fileURLWithPath:path!)
+        return url as QLPreviewItem
     }
 }

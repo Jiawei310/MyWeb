@@ -13,6 +13,13 @@ class Source {
 
 //MARK: webs
 extension Source {
+    class  func getFilePath(fileName:String, type:String) -> String? {
+        if let path = Bundle.main.path(forResource: fileName, ofType: type) {
+            return path
+        }
+        return nil
+    }
+    
     //web获取路径
     class private func getWebsPath() -> String? {
         //模拟器可以读写
@@ -67,6 +74,20 @@ extension Source {
         Source.writeDictionaryToWebs(dict: sourceDict)
     }
     
+    class func deleteWeb(web:Web) {
+        var websDict = Source.getDictionaryOfWebs()
+        var groupDict = websDict![web.group] as! Dictionary<String,Any>
+        
+        let names = [String](groupDict.keys)
+        if names.count == 1 {
+            websDict!.removeValue(forKey: web.group)
+        } else {
+            groupDict.removeValue(forKey: web.name)
+            websDict![web.group] = groupDict
+        }
+        
+        Source.writeDictionaryToWebs(dict: websDict!)
+    }
     //名字是否存在
     class func hasName(web:Web) -> Bool {
         let sourceDict:Dictionary<String, Any> = Source.getDictionaryOfWebs()!
