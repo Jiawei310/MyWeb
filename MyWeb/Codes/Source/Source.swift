@@ -15,10 +15,20 @@ class Source {
 extension Source {
     //web获取路径
     class private func getWebsPath() -> String? {
-        if let pathWebs = Bundle.main.path(forResource: "webs", ofType: "plist") {
-            return pathWebs
+        //模拟器可以读写
+//        if let pathWebs = Bundle.main.path(forResource: "webs", ofType: "plist") {
+//            return pathWebs
+//        }
+        
+        //真机可以读写
+        let fileManager = FileManager.default
+        let documentDirectory: Array = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let path = documentDirectory[0].appending("/webs.plist")
+        let isExit = fileManager.fileExists(atPath: path)
+        if !isExit {
+            fileManager.createFile(atPath: path, contents: nil, attributes: nil)
         }
-        return nil
+        return path
     }
     
     //web读取数据

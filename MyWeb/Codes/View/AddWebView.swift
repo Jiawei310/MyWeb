@@ -24,9 +24,14 @@ class AddWebsView: UIView {
     var web:Web?
     var delegate: AddWebsViewDelegate?
     
+    lazy var tapGesture:UIGestureRecognizer = {[unowned self] in
+        let gesture = UITapGestureRecognizer.init(target: self, action: #selector(tapBackViewAction))
+        return gesture
+    }()
     lazy var backView: UIView = {[unowned self] in
         let backView = UIView.init()
         backView.backgroundColor = UIColor.lightGray
+        backView.addGestureRecognizer(tapGesture)
         return backView
     }()
     
@@ -68,6 +73,7 @@ class AddWebsView: UIView {
         btn.addTarget(self, action: #selector(addBtnAction), for: .touchUpInside)
         return btn
     }()
+    
     
     override init(frame:CGRect) {
         super.init(frame: frame)
@@ -139,9 +145,16 @@ extension AddWebsView {
     
     @objc func addBtnAction() {
         if let group = groupField.text, let name = nameField.text, let www = webField.text {
+            if group.isEmpty || name.isEmpty || www.isEmpty {
+                return
+            }
             web = Web.init(group:group, name: name, web: www)
             delegate?.addWebs(web: web!)
         }
+        hiddenAddWebs()
+    }
+    
+    @objc func tapBackViewAction() {
         hiddenAddWebs()
     }
 }

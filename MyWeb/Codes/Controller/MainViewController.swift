@@ -19,7 +19,7 @@ class MainViewController: UIViewController {
     }()
     
     lazy var addWebsView: AddWebsView = {[unowned self] in
-        let addWebsView = AddWebsView(frame: CGRect(x: 15, y: 100, width: cScreenW - 30, height: 250.0))
+        let addWebsView = AddWebsView(frame: CGRect(x: 15, y: cScreenH - 250.0, width: cScreenW - 30, height: 250.0))
         addWebsView.isHidden = true
         addWebsView.delegate = self
         return addWebsView
@@ -39,9 +39,14 @@ class MainViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action:#selector(rightAddAction))
 
         
+        //注册通知
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
+        
+        //添加控件
         self.view.addSubview(tableView)
         self.view.addSubview(addWebsView)
-        if websDict!.isEmpty {
+        if websDict == nil || websDict!.isEmpty {
             let originalDict = [
                 "BlockChain": ["Candy":"https://ibo.candy.one","非小号":"https://www.feixiaohao.com"],
                 "Learn": ["知笔墨":"http://zhibimo.com","ECMAScript 6 入门":"http://es6.ruanyifeng.com/#docs/intro"]
@@ -52,6 +57,9 @@ class MainViewController: UIViewController {
         tableView.reloadData()
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -81,6 +89,28 @@ extension MainViewController {
         let group = groups[index]
         let dict = websDict![group] as! Dictionary<String,Any>
         return dict
+    }
+}
+
+// 键盘通知
+extension MainViewController {
+    @objc private func keyboardWillShow(_ notification:Notification) {
+        let kbInfo = notification.userInfo
+        let kbRect = (kbInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        let kbH = kbRect.origin.y - cScreenH
+        let duration = kbInfo![UIKeyboardAnimationDurationUserInfoKey] as! Double
+        UIView.animate(withDuration: duration) {
+            self.addWebsView.transform = CGAffineTransform(translationX: 0, y: kbH)
+        }
+    }
+    @objc private func keyboardWillHide(_ notification:Notification) {
+        let kbInfo = notification.userInfo
+        let kbRect = (kbInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+//        let changeY = kbRect.origin.y - cScreenH
+        let duration = kbInfo![UIKeyboardAnimationDurationUserInfoKey] as! Double
+        UIView.animate(withDuration: duration) {
+            self.addWebsView.transform = CGAffineTransform(translationX: 0, y: 0)
+        }
     }
 }
 
